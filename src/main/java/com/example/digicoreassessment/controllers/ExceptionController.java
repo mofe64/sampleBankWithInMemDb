@@ -1,5 +1,6 @@
 package com.example.digicoreassessment.controllers;
 
+import com.example.digicoreassessment.exceptions.AccountException;
 import com.example.digicoreassessment.payloads.response.ApiResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -31,5 +32,15 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
         response.setMessage("Incorrect account number or password");
         return new ResponseEntity<Object>(response, new HttpHeaders(), HttpStatus.UNAUTHORIZED);
     }
+    @ExceptionHandler({AccountException.class})
+    public ResponseEntity<Object> handleAccountException(AccountException exception, WebRequest request) {
+        ApiResponse response = new ApiResponse();
+        response.setResponseCode(400);
+        response.setSuccess(false);
+        response.setMessage(exception.getMessage());
+        return new ResponseEntity<Object>(response, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    }
+
+
 
 }

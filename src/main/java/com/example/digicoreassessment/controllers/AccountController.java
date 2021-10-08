@@ -13,10 +13,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/")
@@ -31,7 +34,7 @@ public class AccountController {
     private AuthenticationManager authenticationManager;
 
     @PostMapping("create_account")
-    public ResponseEntity<?> createNewAccount(@RequestBody CreateAccountRequest request) {
+    public ResponseEntity<?> createNewAccount(@Valid @RequestBody CreateAccountRequest request) {
         accountService.createAccount(request);
         ApiResponse response = new ApiResponse();
         response.setResponseCode(201);
@@ -41,7 +44,7 @@ public class AccountController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getAccountNumber(),
@@ -54,5 +57,19 @@ public class AccountController {
         response.setAccessToken(token);
         response.setSuccess(true);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @PostMapping("deposit")
+    public ResponseEntity<?> deposit()
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException exception) {
+        Map<String, String> errors = new HashMap<>();
+        exception.getBindingResult().getAllErrors().forEach((error -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        }));
+        return errors;
     }
 }
