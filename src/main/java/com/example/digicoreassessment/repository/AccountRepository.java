@@ -32,7 +32,6 @@ public class AccountRepository {
     }
 
         public Optional<Account> getAccountByAccountNumber(String accountNumber) {
-            log.info("accounts --> {}", accounts);
             return Optional.of(accounts.get(accountNumber));
         }
 }
