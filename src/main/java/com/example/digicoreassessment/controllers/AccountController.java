@@ -1,8 +1,7 @@
 package com.example.digicoreassessment.controllers;
 
-import com.example.digicoreassessment.payloads.requests.CreateAccountRequest;
-import com.example.digicoreassessment.payloads.requests.DepositRequest;
-import com.example.digicoreassessment.payloads.requests.LoginRequest;
+import com.example.digicoreassessment.models.Transaction;
+import com.example.digicoreassessment.payloads.requests.*;
 import com.example.digicoreassessment.payloads.response.ApiResponse;
 import com.example.digicoreassessment.payloads.response.AuthToken;
 import com.example.digicoreassessment.services.AccountService;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -64,6 +64,19 @@ public class AccountController {
         String successMessage = accountService.deposit(request);
         return new ResponseEntity<>(new ApiResponse(200, true, successMessage), HttpStatus.OK);
     }
+
+    @PostMapping("withdraw")
+    public ResponseEntity<?> withdraw(@RequestBody @Valid WithdrawRequest request) {
+        String successMessage = accountService.withdraw(request);
+        return new ResponseEntity<>(new ApiResponse(200, true, successMessage), HttpStatus.OK);
+    }
+
+    @GetMapping("account_statement/{accountNumber}")
+    public ResponseEntity<?> getAccountStatement(@RequestBody @Valid AccountDetailsRequest request, @PathVariable String accountNumber) {
+        List<Transaction> accountStatement = accountService.getAccountStatement(request,accountNumber);
+        return new ResponseEntity<>(accountStatement, HttpStatus.OK);
+    }
+
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
