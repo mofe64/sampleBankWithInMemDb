@@ -1,6 +1,7 @@
 package com.example.digicoreassessment.repository;
 
 import com.example.digicoreassessment.models.Account;
+import com.example.digicoreassessment.models.Role;
 import com.example.digicoreassessment.payloads.requests.CreateAccountRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.CharacterPredicate;
@@ -27,11 +28,17 @@ public class AccountRepository {
         account.setBalance(request.getInitialDeposit());
         account.setAccountNumber(generateAccountNumber());
         account.setAccountPassword(request.getAccountPassword());
+        account.addRole(Role.CUSTOMER);
         accounts.put(account.getAccountNumber(), account);
         return account;
     }
 
-        public Optional<Account> getAccountByAccountNumber(String accountNumber) {
-            return Optional.of(accounts.get(accountNumber));
+        public Account getAccountByAccountNumber(String accountNumber) {
+            log.info("getting account ---> {}", accounts.get(accountNumber));
+            return accounts.get(accountNumber);
+        }
+
+        public void updateAccount (String accountNumber, Account account) {
+            accounts.put(accountNumber, account);
         }
 }

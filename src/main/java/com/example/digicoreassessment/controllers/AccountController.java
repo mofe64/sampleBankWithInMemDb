@@ -1,6 +1,7 @@
 package com.example.digicoreassessment.controllers;
 
 import com.example.digicoreassessment.payloads.requests.CreateAccountRequest;
+import com.example.digicoreassessment.payloads.requests.DepositRequest;
 import com.example.digicoreassessment.payloads.requests.LoginRequest;
 import com.example.digicoreassessment.payloads.response.ApiResponse;
 import com.example.digicoreassessment.payloads.response.AuthToken;
@@ -37,10 +38,10 @@ public class AccountController {
     public ResponseEntity<?> createNewAccount(@Valid @RequestBody CreateAccountRequest request) {
         accountService.createAccount(request);
         ApiResponse response = new ApiResponse();
-        response.setResponseCode(201);
+        response.setResponseCode(200);
         response.setSuccess(true);
         response.setMessage("Account created successfully");
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("login")
@@ -59,7 +60,10 @@ public class AccountController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @PostMapping("deposit")
-    public ResponseEntity<?> deposit()
+    public ResponseEntity<?> deposit(@RequestBody @Valid DepositRequest request) {
+        String successMessage = accountService.deposit(request);
+        return new ResponseEntity<>(new ApiResponse(200, true, successMessage), HttpStatus.OK);
+    }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)

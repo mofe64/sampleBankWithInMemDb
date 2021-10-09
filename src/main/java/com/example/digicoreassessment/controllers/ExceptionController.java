@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -30,6 +31,15 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
         response.setResponseCode(401);
         response.setSuccess(false);
         response.setMessage("Incorrect account number or password");
+        return new ResponseEntity<Object>(response, new HttpHeaders(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler({InsufficientAuthenticationException.class})
+    public ResponseEntity<Object> handleInsufficientAuthenticationException(InsufficientAuthenticationException exception, WebRequest request) {
+        ApiResponse response = new ApiResponse();
+        response.setResponseCode(401);
+        response.setSuccess(false);
+        response.setMessage(exception.getMessage());
         return new ResponseEntity<Object>(response, new HttpHeaders(), HttpStatus.UNAUTHORIZED);
     }
     @ExceptionHandler({AccountException.class})
