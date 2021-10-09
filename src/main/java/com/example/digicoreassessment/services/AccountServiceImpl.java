@@ -27,12 +27,12 @@ import java.util.Set;
 @Slf4j
 public class AccountServiceImpl implements AccountService, UserDetailsService {
     private final AccountRepository accountRepository;
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AccountServiceImpl(AccountRepository accountRepository, PasswordEncoder passwordEncoder) {
+    public AccountServiceImpl(AccountRepository accountRepository ) {
         this.accountRepository = accountRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override

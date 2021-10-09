@@ -45,4 +45,8 @@ public class AccountRepository {
         public boolean accountNameExists(String name) {
            return accounts.values().stream().anyMatch(account -> account.getAccountName().equalsIgnoreCase(name));
         }
+
+        public Account getAccountByAccountName(String accountName){
+            return accounts.values().stream().filter(account -> account.getAccountName().equalsIgnoreCase(accountName)).findFirst().get();
+        }
 }
