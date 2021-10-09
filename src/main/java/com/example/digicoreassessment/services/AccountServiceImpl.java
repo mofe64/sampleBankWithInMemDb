@@ -38,6 +38,10 @@ public class AccountServiceImpl implements AccountService, UserDetailsService {
     @Override
     public void createAccount(CreateAccountRequest request) {
         String encryptedPassword = passwordEncoder.encode(request.getAccountPassword());
+        String accountName = request.getAccountName();
+        if(accountRepository.accountNameExists(accountName)) {
+            throw new AccountException(String.format("Account name %s already exists", accountName));
+        }
         request.setAccountPassword(encryptedPassword);
         Account newAccount = accountRepository.createAccount(request);
         log.info("new Account --> {}", newAccount);
@@ -47,8 +51,8 @@ public class AccountServiceImpl implements AccountService, UserDetailsService {
     public String deposit(DepositRequest request) {
         String accountNumber = request.getAccountNumber();
         double depositAmount = request.getAmount();
-        if (depositAmount > 1_000_000.00 || depositAmount < 1.00) {
-            throw new AccountException("Deposit amount must be between 1.00 and 1000000.00");
+        if (depositAmount >= 1_000_000.00 || depositAmount < 1.00) {
+            throw new AccountException("Deposit amount must be between 1.00 and 999999.00");
         }
         Account accountToFund = accountRepository.getAccountByAccountNumber(accountNumber);
         if(accountToFund == null) {
@@ -112,6 +116,19 @@ public class AccountServiceImpl implements AccountService, UserDetailsService {
             throw  new AccountException("Incorrect password for this account");
         }
         return accountRequested.getTransactions();
+    }
+
+    @Override
+    public Account getAccountInfo(AccountDetailsRequest request, String accountNumber) {
+        Account accountRequested = accountRepository.getAccountByAccountNumber(accountNumber);
+        String accountPassword = request.getAccountPassword();
+        if(accountRequested == null) {
+            throw  new AccountException(String.format("No account found with that account number %s", accountNumber));
+        }
+        if (!passwordEncoder.matches(accountPassword, accountRequested.getAccountPassword())) {
+            throw  new AccountException("Incorrect password for this account");
+        }
+        return accountRequested;
     }
 
     @Override

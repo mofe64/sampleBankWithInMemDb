@@ -1,7 +1,9 @@
 package com.example.digicoreassessment.controllers;
 
+import com.example.digicoreassessment.models.Account;
 import com.example.digicoreassessment.models.Transaction;
 import com.example.digicoreassessment.payloads.requests.*;
+import com.example.digicoreassessment.payloads.response.AccountInfoResponse;
 import com.example.digicoreassessment.payloads.response.ApiResponse;
 import com.example.digicoreassessment.payloads.response.AuthToken;
 import com.example.digicoreassessment.services.AccountService;
@@ -75,6 +77,17 @@ public class AccountController {
     public ResponseEntity<?> getAccountStatement(@RequestBody @Valid AccountDetailsRequest request, @PathVariable String accountNumber) {
         List<Transaction> accountStatement = accountService.getAccountStatement(request,accountNumber);
         return new ResponseEntity<>(accountStatement, HttpStatus.OK);
+    }
+
+    @GetMapping("account_info/{accountNumber}")
+    public ResponseEntity<?> getAccountInfo(@RequestBody @Valid AccountDetailsRequest request, @PathVariable String accountNumber) {
+        Account requestedAccount = accountService.getAccountInfo(request, accountNumber);
+        AccountInfoResponse response = new AccountInfoResponse();
+        response.setResponseCode(200);
+        response.setSuccess(true);
+        response.setMessage("Account details retrieved successfully");
+        response.setAccount(requestedAccount);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 

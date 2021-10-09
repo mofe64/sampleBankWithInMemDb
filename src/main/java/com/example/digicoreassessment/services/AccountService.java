@@ -1,5 +1,6 @@
 package com.example.digicoreassessment.services;
 
+import com.example.digicoreassessment.models.Account;
 import com.example.digicoreassessment.models.Transaction;
 import com.example.digicoreassessment.payloads.requests.AccountDetailsRequest;
 import com.example.digicoreassessment.payloads.requests.CreateAccountRequest;
@@ -13,4 +14,5 @@ public interface AccountService {
     String deposit(DepositRequest request);
     String withdraw(WithdrawRequest request);
     List<Transaction> getAccountStatement(AccountDetailsRequest request, String accountNumber);
+    Account getAccountInfo(AccountDetailsRequest request, String accountNumber);
 }

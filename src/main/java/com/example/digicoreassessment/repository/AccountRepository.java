@@ -41,4 +41,8 @@ public class AccountRepository {
         public void updateAccount (String accountNumber, Account account) {
             accounts.put(accountNumber, account);
         }
+
+        public boolean accountNameExists(String name) {
+           return accounts.values().stream().anyMatch(account -> account.getAccountName().equalsIgnoreCase(name));
+        }
 }
